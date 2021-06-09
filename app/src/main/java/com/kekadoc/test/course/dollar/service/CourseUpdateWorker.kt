@@ -14,8 +14,9 @@ import androidx.work.WorkerParameters
 import com.kekadoc.test.course.dollar.MainActivity
 import com.kekadoc.test.course.dollar.R
 import com.kekadoc.test.course.dollar.isAppForeground
+import com.kekadoc.test.course.dollar.model.numericValue
 import com.kekadoc.test.course.dollar.repository.HttpRepository
-import com.kekadoc.test.course.dollar.storage.LocalStorage
+import com.kekadoc.test.course.dollar.repository.LocalStorage
 
 class CourseUpdateWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
@@ -30,25 +31,20 @@ class CourseUpdateWorker(appContext: Context, params: WorkerParameters) : Corout
     private val storage = LocalStorage.getInstance(appContext)
 
     override suspend fun doWork(): Result {
-        Log.e(TAG, "doWork: ")
         try {
             val monthlyCourse = HttpRepository.loadMonthlyCourse()
             val dailyCourse = HttpRepository.loadDailyCourse()
 
-            val newDailyDollarCourse = dailyCourse.valutes.find {
+            val newDailyDollarCourseValue = dailyCourse.valutes.find {
                 it.id == HttpRepository.DOLLAR_ID
-            }
+            }.numericValue
             val savedDollarCourseValue = storage.dailyCourse.value?.valutes?.find {
                 it.id == HttpRepository.DOLLAR_ID
-            }?.value ?: "0"
+            }.numericValue
 
-            newDailyDollarCourse?.let {
-                try {
-                    val oldValue = savedDollarCourseValue.replace(",", ".").toDouble()
-                    val newValue = it.value.replace(",", ".").toDouble()
-                    if (newValue > oldValue && !applicationContext.isAppForeground())
-                        showNotification(applicationContext.getString(R.string.dollar_course_update_message), newDailyDollarCourse.value)
-                } catch (e: NumberFormatException) { }
+            Log.e(TAG, "doWork: $newDailyDollarCourseValue $savedDollarCourseValue")
+            if (newDailyDollarCourseValue > savedDollarCourseValue && !applicationContext.isAppForeground()) {
+                showNotification(applicationContext.getString(R.string.dollar_course_update_message), newDailyDollarCourseValue.toString())
             }
             storage.saveDailyCourse(dailyCourse)
             storage.saveMonthlyCourse(monthlyCourse)

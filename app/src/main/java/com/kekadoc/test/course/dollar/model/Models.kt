@@ -5,6 +5,7 @@ import org.simpleframework.xml.Attribute
 import org.simpleframework.xml.Element
 import org.simpleframework.xml.ElementList
 import org.simpleframework.xml.Root
+import java.math.BigDecimal
 
 @Serializable
 @Root(name = "ValCurs", strict = false)
@@ -33,6 +34,8 @@ data class Valute @JvmOverloads constructor(
     @field:Element(name = "Value")
     var value: String = "",
 )
+val Valute?.numericValue: Double
+    get() = this?.value?.replace(",", ".")?.toDoubleOrNull() ?: 0.0
 
 @Serializable
 @Root(name = "ValCurs")

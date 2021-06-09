@@ -2,25 +2,22 @@ package com.kekadoc.test.course.dollar
 
 import android.app.Application
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
+import androidx.work.BackoffPolicy
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.kekadoc.test.course.dollar.databinding.ActivityMainBinding
 import com.kekadoc.test.course.dollar.repository.HttpRepository
 import com.kekadoc.test.course.dollar.service.CourseUpdateWorker
-import com.kekadoc.test.course.dollar.storage.LocalStorage
+import com.kekadoc.test.course.dollar.repository.LocalStorage
 import com.kekadoc.test.course.dollar.ui.Navigation
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -99,6 +96,7 @@ class MainActivity : AppCompatActivity(), Navigation {
         val delay = timeUpdateMs - currentTimeMs
         val uploadWorkRequest = PeriodicWorkRequestBuilder<CourseUpdateWorker>(24, TimeUnit.HOURS)
             .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+            .setBackoffCriteria(BackoffPolicy.LINEAR, 1, TimeUnit.HOURS)
             .build()
 
         val enqueueUniquePeriodicWork = WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -112,4 +110,5 @@ class MainActivity : AppCompatActivity(), Navigation {
     override fun navigate(id: Int, data: Bundle) {
         navController.navigate(id, data)
     }
+
 }

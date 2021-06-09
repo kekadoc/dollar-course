@@ -1,9 +1,8 @@
-package com.kekadoc.test.course.dollar.storage
+package com.kekadoc.test.course.dollar.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.content.edit
 import com.kekadoc.test.course.dollar.model.ValCurs
 import com.kekadoc.test.course.dollar.model.ValCursRange
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,8 +32,7 @@ class LocalStorage private constructor(context: Context)  {
     }
 
     private val preference = context.getSharedPreferences("localStorage", Context.MODE_PRIVATE)
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-        Log.e(TAG, "OnSharedPreferenceChangeListener: $key")
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == KEY_DAILY_COURSE) _dailyCourse.value = loadDailyCourse()
         if (key == KEY_MONTHLY_COURSE) _monthlyCourse.value = loadMonthlyCourse()
     }

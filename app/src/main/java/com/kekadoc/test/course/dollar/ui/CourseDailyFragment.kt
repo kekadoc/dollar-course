@@ -39,7 +39,6 @@ class CourseDailyFragment : Fragment() {
                 binding.textViewCurrentDate.text = it.date
                 binding.textViewName.text = dollarCourse.name
             }
-
         }.launchIn(lifecycleScope)
     }
 
