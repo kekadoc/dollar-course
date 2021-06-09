@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/destination_course_day">
+
+    <fragment
+        android:id="@+id/destination_course_day"
+        android:name="com.kekadoc.test.course.dollar.ui.CourseDailyFragment"
+        android:label="@string/title_course_day"
+        tools:layout="@layout/fragment_course_daily" >
+        <action
+            android:id="@+id/action_destination_course_day_to_destination_course_month"
+            app:destination="@id/destination_course_month" />
+    </fragment>
+
+    <dialog
+        android:id="@+id/destination_course_month"
+        android:name="com.kekadoc.test.course.dollar.ui.CourseMonthlyFragment"
+        android:label="@string/title_course_month"
+        tools:layout="@layout/fragment_course_monthly" >
+        <action
+            android:id="@+id/action_destination_course_month_to_destination_course_day"
+            app:destination="@id/destination_course_day" />
+    </dialog>
+
+</navigation>
